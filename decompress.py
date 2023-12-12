@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import re
+from gzipDecompress import decodeGzipBase64 as dGB
 from imageTrim import crop_image_from_url as ci
 import uuid
 
@@ -41,14 +42,24 @@ def decodeCustomEncodingType():
 
     # DecodeByteObject
     jsonParsedContent = replacedCharMap.decode("utf-8")
+    try:
+        questions = json.loads(jsonParsedContent)["questionObjs"]
+        if questions:
+            questionAndAnswerParser(questions)
+        else:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(jsonParsedContent)        
+    except KeyError:
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(jsonParsedContent)
+            resultTrack = json.loads(jsonParsedContent)["resultTrack"][4:]
+            e = dGB(resultTrack).decode("utf-8")
+            print("Your answer: ", e)
+            
     
-    questionAndAnswerParser(jsonParsedContent)
-    
-
 # Parse question and answer   
-def questionAndAnswerParser(jsonParsedContent):
+def questionAndAnswerParser(questions):
     # Get all the questions and answers:
-    questions = json.loads(jsonParsedContent)["questionObjs"]
     with open(file_path, "w+", encoding="utf-8") as f:
         for x in range(len(list(questions))):
             f.write(f"Câu {x + 1}:<br>")
@@ -63,7 +74,7 @@ def questionAndAnswerParser(jsonParsedContent):
         # Check if image exists and get the link
         f.seek(0)
         imageLinks = re.findall(r"@\[\].+?@\[\]", f.read())
-        if (imageLinks is not None):
+        if imageLinks:
             parseImage(imageLinks)
         else:
             pass
