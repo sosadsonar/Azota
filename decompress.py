@@ -42,6 +42,9 @@ def decodeCustomEncodingType():
 
     # DecodeByteObject
     jsonParsedContent = replacedCharMap.decode("utf-8")
+    with open(file_path, "w", encoding="utf-8") as f:
+            f.write(jsonParsedContent)
+       
     try:
         questions = json.loads(jsonParsedContent)["questionObjs"]
         if questions:
@@ -70,6 +73,11 @@ def questionAndAnswerParser(questions):
                 f.write(questions[x]["answers"][y]["content"])
                 f.write("<br>")
             f.write("<br>")
+            
+    with open(file_path, "r+", encoding="utf-8") as f:
+        a = re.sub(r"(?<=xmlns=\"http://www\.w3\.org/1998/Math/MathML\" display=\").+?(?=\")", "inline", f.read())
+        f.seek(0)
+        f.write(a)
 
         # Check if image exists and get the link
         f.seek(0)
