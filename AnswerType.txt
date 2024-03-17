@@ -1,0 +1,4 @@
+1: Chọn 1 đáp án đúng
+2: Chọn nhiều đáp án đúng
+3: Tự luận ngắn
+4: Điền vào chỗ trống
